@@ -9,13 +9,11 @@ const Files = () => {
       .then(res => res.json())
       .then(data => setFiles(data))
       .catch(err => console.log(err));
-  }, [])
+  }, [files])
 
   return (
     <div className="files">
-      {files.map((file, index) => (
-        <div key={index}>{file}</div>
-      ))}
+      {files.length > 0 ? files.map((file, index) => <div key={index}>{file}</div>) : <div>No files uploaded</div>}
     </div>
   )
 }
