@@ -1,29 +1,45 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import axios from 'axios';
 
 const UploadForm = () => {
+   const [file, setFile] = useState();
 
-  const [selectedFile, setSelectedFile] = useState(null);
+   const handleFileChange = (e) => {
+      if (e.target.files) setFile(e.target.files[0]);
+   };
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    console.log(selectedFile);
+   const handleUploadClick = (e) => {
+      e.preventDefault();
+      if (!file) return;
 
-    // const response = await fetch('http://localhost:5000/upload', {
-    //   method: 'POST', 
-    //   mode: 'cors',  
-    //   body: JSON.stringify(data) 
-    // });
-  };
+      axios
+         .post(
+            'http://localhost:5000/',
+            {
+               receiveFiles: file,
+            },
+            {
+               headers: {
+                  'Content-Type': 'multipart/form-data',
+               },
+            }
+         )
+         .then(function (response) {
+            console.log(response);
+         })
+         .catch(function (error) {
+            console.log(error);
+         });
+   };
 
-  return (
-    <div className="formContainer">
-      <form onSubmit={onSubmit}>
-        <input type="file" name="receiveFiles" value={selectedFile} onChange={(e) => setSelectedFile(e.target.files[0])}/>
-        <input type="submit" value="submit" />
-      </form>
-    </div>
-  )
-}
+   return (
+      <div className="formContainer">
+         <form onSubmit={handleUploadClick}>
+            <input type="file" onChange={handleFileChange} multiple />
+            <input type="submit" value="submit" />
+         </form>
+      </div>
+   );
+};
 
-export default UploadForm
-
+export default UploadForm;

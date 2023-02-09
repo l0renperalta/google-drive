@@ -2,7 +2,6 @@ const express = require('express');
 const port = process.env.PORT || 5000;
 const fileUpload = require('express-fileupload');
 const fs = require('fs');
-const mime = require('mime-types');
 const cors = require('cors');
 
 const app = express();
@@ -10,7 +9,7 @@ const app = express();
 app.use(fileUpload());
 app.use(cors());
 
-app.get('/', async (req, res, next) => {
+app.get('/', async (req, res) => {
    try {
       const dir = await fs.promises.opendir(`${__dirname}/uploads`);
       const elements = [];
@@ -23,7 +22,7 @@ app.get('/', async (req, res, next) => {
    }
 });
 
-app.post('/upload', (req, res) => {
+app.post('/', (req, res) => {
    if (!req.files || Object.keys(req.files).length === 0) {
       return res.status(400).send('No files were uploaded.');
    }
@@ -37,7 +36,6 @@ app.post('/upload', (req, res) => {
    try {
       data.forEach((file) => {
          const uploadPath = __dirname + '/uploads/' + file.name;
-
          file.mv(uploadPath);
       });
    } catch (error) {
@@ -48,4 +46,3 @@ app.post('/upload', (req, res) => {
 });
 
 app.listen(port, () => console.log(`Listening in port ${port}`));
-
