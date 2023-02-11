@@ -5,32 +5,23 @@ const UploadForm = () => {
    const [file, setFile] = useState();
 
    const handleFileChange = (e) => {
-      if (e.target.files) setFile(e.target.files[0]);
+      if (e.target.files) setFile(e.target.files);
    };
 
-   const handleUploadClick = (e) => {
+   const handleUploadClick = async (e) => {
       e.preventDefault();
       if (!file) return;
+      console.log(file);
+      try {
+        const response = await axios.post('http://localhost:5000/', { receiveFiles: file, },
+          { headers: { 'Content-Type': 'multipart/form-data' } 
+        });
+        console.log(response);
 
-      axios
-         .post(
-            'http://localhost:5000/',
-            {
-               receiveFiles: file,
-            },
-            {
-               headers: {
-                  'Content-Type': 'multipart/form-data',
-               },
-            }
-         )
-         .then(function (response) {
-            console.log(response);
-         })
-         .catch(function (error) {
-            console.log(error);
-         });
-   };
+      } catch (error) {
+        console.log(error);
+      }
+  };
 
    return (
       <div className="formContainer">

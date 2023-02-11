@@ -8,6 +8,8 @@ const app = express();
 
 app.use(fileUpload());
 app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/', async (req, res) => {
    try {
@@ -23,11 +25,11 @@ app.get('/', async (req, res) => {
 });
 
 app.post('/', (req, res) => {
-   if (!req.files || Object.keys(req.files).length === 0) {
+   if (!req.files) {
       return res.status(400).send('No files were uploaded.');
    }
 
-   let data = req.files.receiveFiles;
+   let data = Object.values(req.files)[0];
 
    if (!Array.isArray(data)) {
       data = [data];
