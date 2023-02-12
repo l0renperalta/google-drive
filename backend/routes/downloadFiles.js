@@ -3,10 +3,15 @@ const router = express.Router();
 const path = require('path');
 const fs = require('fs');
 
-router.get('/download/:id', function (req, res) {
-   res.send(req.params.id);
-   // const file = `${__dirname}/upload-folder/dramaticpenguin.MOV`;
-   // res.download(file);
+router.get('/download/:name', (req, res) => {
+    const fileName = req.params.name;
+    const file = path.join(__dirname, '..', 'uploads', fileName);
+    res.download(file);
+});
+
+router.get('/delete/:name', (req, res) => {
+    const fileName = req.params.name;
+    fs.promises.unlink(path.join(__dirname, '..', 'uploads', fileName));
 });
 
 module.exports = router;
