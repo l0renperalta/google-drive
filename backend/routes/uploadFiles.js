@@ -6,9 +6,13 @@ const fs = require('fs');
 router.get('/', async (req, res) => {
    try {
       const dir = await fs.promises.opendir(path.join(__dirname, '..', 'uploads'));
-      const elements = [];
+      const elements = { files: [], directories: [] };
       for await (const dirent of dir) {
-         elements.push(dirent.name);
+         if (dirent.isDirectory()) {
+            elements.directories.push(dirent.name);
+         } else {
+            elements.files.push(dirent.name);
+         }
       }
       res.json(elements);
    } catch (error) {

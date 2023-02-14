@@ -1,42 +1,33 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BsFillXCircleFill } from 'react-icons/bs';
+import { GoFileDirectory } from 'react-icons/go';
+import { fetchData, handleDeleteFile } from '../services/api';
 
 const UploadForm = () => {
-   const [file, setFile] = useState();
-   const [files, setFiles] = useState([]);
-   const [submit, setSubmit] = useState(true);
-   const [deleteFile, setDeleteFile] = useState(false);
-
-   const handleFileChange = (e) => {
-      if (e.target.files) setFile(e.target.files);
-   };
+   const [uploadedFile, setUploadedFile] = useState();
+   const [elements, setElements] = useState({ files: [], directories: [] });
+   const [clickOnSubmit, setClickOnSubmit] = useState(true);
+   const [clickOnDelete, setClickOnDelete] = useState(false);
 
    useEffect(() => {
-      if (submit) {
-         fetchData();
+      if (clickOnSubmit) {
+         fetchData().then((data) => {
+            setElements(data.elements);
+            setClickOnSubmit(data.state);
+         });
       }
-      if (deleteFile) {
-         onDelete();
+      if (clickOnDelete) {
+         fetchData().then((data) => {
+            setElements(data.elements);
+            setClickOnDelete(data.state);
+         });
       }
    });
 
-   const fetchData = async () => {
-      const response = await fetch('http://localhost:5000/');
-      const data = await response.json();
-      setFiles(data);
-      setSubmit(false);
-   };
-
-   const onDelete = async () => {
-      const response = await fetch('http://localhost:5000/');
-      const data = await response.json();
-      setFiles(data);
-   };
-
    const handleUploadClick = async (e) => {
       e.preventDefault();
-      if (!file) {
+      if (!uploadedFile) {
          console.log('No file uploaded');
          return;
       }
@@ -44,18 +35,20 @@ const UploadForm = () => {
       try {
          const response = await axios.post(
             'http://localhost:5000/',
-            { receiveFiles: file },
+            { receiveFiles: uploadedFile },
             { headers: { 'Content-Type': 'multipart/form-data' } }
          );
          console.log(response);
       } catch (error) {
          console.log(error);
       }
-      setSubmit(true);
+
+      e.target[0].value = null;
+      setClickOnSubmit(true);
    };
 
-   const handleDeleteFile = async (file) => {
-      await axios.get('http://localhost:5000/delete/' + file);
+   const handleFileChange = (e) => {
+      if (e.target.files) setUploadedFile(e.target.files);
    };
 
    return (
@@ -66,16 +59,33 @@ const UploadForm = () => {
                <input type="submit" value="submit" />
             </form>
          </div>
+         <div className="formContainer" style={{ marginTop: '20px' }}>
+            <form>
+               <div>
+                  <label>Create a directory</label>
+               </div>
+               <input type="input" />
+               <input type="submit" value="submit" />
+            </form>
+         </div>
          <div className="files">
-            {files.length > 0 ? (
-               files.map((file, index) => (
-                  <div key={index} className="fileName">
+            {elements.directories &&
+               elements.directories.map((directory, index) => (
+                  <div key={index}>
+                     <GoFileDirectory style={{ color: '#3ea6ff', paddingRight: '1em' }} />
+                     {directory}
+                  </div>
+               ))}
+            {elements.files.length > 0 ? (
+               elements.files.map((file, index) => (
+                  <div key={index}>
                      <a href={`http://localhost:5000/download/${file}`}>{file}</a>
                      <BsFillXCircleFill
                         onClick={() => {
-                           setDeleteFile(true);
+                           setClickOnDelete(true);
                            handleDeleteFile(file);
                         }}
+                        style={{ color: '#ffa53e', paddingLeft: '1em' }}
                      />
                   </div>
                ))
