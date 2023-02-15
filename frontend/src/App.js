@@ -1,6 +1,7 @@
 import './App.css';
 import UploadForm from './components/UploadForm';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Files from './components/Files';
 
 function App() {
     return (
@@ -9,7 +10,7 @@ function App() {
                 <UploadForm />
             </div>
             <Routes>
-                <Route path="/wallpapers" element={<div>Hello world!</div>} />
+                <Route path="/wallpapers" element={<Files/>} />
             </Routes>
         </Router>
     );
