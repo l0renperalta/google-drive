@@ -20,9 +20,9 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/:dir', async (req, res) => {
+router.get('/:path?', async (req, res) => {
     try {
-        const dir = await fs.promises.opendir(path.join('.', 'uploads', req.params.dir));
+        const dir = await fs.promises.opendir(path.join('.', 'uploads', req.params.path.split('-').join('/')));
         const elements = { files: [], directories: [] };
         for await (const dirent of dir) {
             if (dirent.isDirectory()) {
@@ -60,17 +60,6 @@ router.post('/', (req, res) => {
     res.json({
         message: 'File Uploaded',
     });
-});
-
-router.post('/create/:dirName', (req, res) => {
-    const dir = './uploads/' + req.params.dirName;
-
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
-        res.json('directory created');
-    } else {
-        res.json('directory already exists');
-    }
 });
 
 module.exports = router;

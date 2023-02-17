@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
-import { BsFillXCircleFill } from 'react-icons/bs';
-import { GoFileDirectory } from 'react-icons/go';
 import { fetchData, uploadFiles, handleDeleteFile } from '../services/api';
-import { Link } from 'react-router-dom';
 import CreateDirectory from './CreateDirectory';
+import MainRoot from './MainRoot';
 
 const UploadForm = () => {
    const [uploadedFile, setUploadedFile] = useState();
@@ -26,6 +24,10 @@ const UploadForm = () => {
       }
    });
 
+   const handleFileChange = (e) => {
+      if (e.target.files) setUploadedFile(e.target.files);
+   };
+
    const handleUploadClick = async (e) => {
       e.preventDefault();
       if (!uploadedFile) {
@@ -39,8 +41,13 @@ const UploadForm = () => {
       setClickOnSubmit(true);
    };
 
-   const handleFileChange = (e) => {
-      if (e.target.files) setUploadedFile(e.target.files);
+   const handleDelete = (data) => {
+      setClickOnDelete(data.state);
+      handleDeleteFile(data.file);
+   };
+
+   const fetchDirectories = (data) => {
+      setElements(data);
    };
 
    return (
@@ -51,32 +58,8 @@ const UploadForm = () => {
                <input type="submit" value="submit" />
             </form>
          </div>
-         <CreateDirectory />
-         <div className="files">
-            {elements.directories &&
-               elements.directories.map((directory, index) => (
-                  <div key={index}>
-                     <GoFileDirectory style={{ color: '#3ea6ff', paddingRight: '1em' }} />
-                     <Link to={directory}>{directory}</Link>
-                  </div>
-               ))}
-            {elements.files.length > 0 ? (
-               elements.files.map((file, index) => (
-                  <div key={index}>
-                     <Link to={'http://localhost:5000/download/' + file}>{file}</Link>
-                     <BsFillXCircleFill
-                        onClick={() => {
-                           setClickOnDelete(true);
-                           handleDeleteFile(file);
-                        }}
-                        style={{ color: '#ff353e', paddingLeft: '1em', cursor: 'pointer' }}
-                     />
-                  </div>
-               ))
-            ) : (
-               <h3>No files uploaded</h3>
-            )}
-         </div>
+         <CreateDirectory fetchDirectories={fetchDirectories} />
+         <MainRoot elements={elements} handleDelete={handleDelete} />
       </>
    );
 };

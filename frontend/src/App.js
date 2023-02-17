@@ -1,19 +1,19 @@
 import './App.css';
 import UploadForm from './components/UploadForm';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Files from './components/Files';
+import { BrowserRouter as Router, Switch, Routes, Route, Redirect } from 'react-router-dom';
+import DirName from './components/DirName';
 
 function App() {
-    return (
-        <Router>
-            <div className="container">
-                <UploadForm />
-            </div>
+   return (
+      <Router>
+         <div className="container">
+            <UploadForm />
             <Routes>
-                <Route path="/wallpapers" element={<Files/>} />
+               <Route path="/:dirName" element={<DirName />} />
             </Routes>
-        </Router>
-    );
+         </div>
+      </Router>
+   );
 }
 
 export default App;
