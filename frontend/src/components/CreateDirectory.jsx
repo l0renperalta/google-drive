@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { createDirectory, fetchData } from '../services/api';
+import { createDirectory, createDirectoryOnPath, fetchData } from '../services/api';
 
 const CreateDirectory = ({ fetchDirectories }) => {
    const [dirName, setDirName] = useState('');
@@ -17,8 +17,14 @@ const CreateDirectory = ({ fetchDirectories }) => {
 
    const handleSubmit = (e) => {
       e.preventDefault();
-      const response = createDirectory(dirName);
-      setCreateDirHandler(response);
+      const path = window.location.pathname.split('/')[1];
+      if (path.length > 2) {
+         const response = createDirectoryOnPath(path, dirName);
+         setCreateDirHandler(response);
+      } else {
+         const response = createDirectory(dirName);
+         setCreateDirHandler(response);
+      }
       myForm.current.reset();
    };
 

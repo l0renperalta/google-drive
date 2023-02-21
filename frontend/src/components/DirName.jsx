@@ -4,7 +4,7 @@ import { BsFillXCircleFill } from 'react-icons/bs';
 import { GoFileDirectory } from 'react-icons/go';
 import { Link } from 'react-router-dom';
 
-function DirName() {
+function DirName({ handleDelete }) {
    const [elements, setElements] = useState({ files: [], directories: [] });
    const [onLoadPath, setOnLoadPath] = useState(true);
 
@@ -29,7 +29,7 @@ function DirName() {
             elements.files.map((file, index) => (
                <div key={index}>
                   <Link to={'http://localhost:5000/download/' + file}>{file}</Link>
-                  {/* <BsFillXCircleFill
+                  <BsFillXCircleFill
                      onClick={() =>
                         handleDelete({
                            state: true,
@@ -37,7 +37,7 @@ function DirName() {
                         })
                      }
                      style={{ color: '#ff353e', paddingLeft: '1em', cursor: 'pointer' }}
-                  /> */}
+                  />
                </div>
             ))
          ) : (

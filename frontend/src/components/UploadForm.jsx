@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchData, uploadFiles, handleDeleteFile } from '../services/api';
+import { fetchData, uploadFiles, uploadFilesPath, handleDeleteFile, fetchDirData } from '../services/api';
 import CreateDirectory from './CreateDirectory';
 import MainRoot from './MainRoot';
 
@@ -8,6 +8,7 @@ const UploadForm = () => {
    const [elements, setElements] = useState({ files: [], directories: [] });
    const [clickOnSubmit, setClickOnSubmit] = useState(true);
    const [clickOnDelete, setClickOnDelete] = useState(false);
+   const [onLoadPath, setOnLoadPath] = useState({ state: false, dir: '' });
 
    useEffect(() => {
       if (clickOnSubmit) {
@@ -20,6 +21,13 @@ const UploadForm = () => {
          fetchData().then((data) => {
             setElements(data.elements);
             setClickOnDelete(data.state);
+         });
+      }
+      if (onLoadPath) {
+         const path = window.location.pathname.split('/')[1];
+         fetchDirData(path).then((data) => {
+            setElements(data.elements);
+            setOnLoadPath(data.state);
          });
       }
    });
@@ -35,7 +43,12 @@ const UploadForm = () => {
          return;
       }
 
-      await uploadFiles(uploadedFile);
+      const path = window.location.pathname.split('/')[1];
+      if (path.length > 2) {
+         await uploadFilesPath(path, uploadedFile);
+      } else {
+         await uploadFiles(uploadedFile);
+      }
 
       e.target[0].value = null;
       setClickOnSubmit(true);
@@ -50,6 +63,14 @@ const UploadForm = () => {
       setElements(data);
    };
 
+   const fetchDirElementes = (state, directory) => {
+      setOnLoadPath({ state, dir: directory });
+   };
+
+   const justFetch = () => {
+      setClickOnSubmit(true);
+   };
+
    return (
       <>
          <div className="formContainer">
@@ -59,7 +80,8 @@ const UploadForm = () => {
             </form>
          </div>
          <CreateDirectory fetchDirectories={fetchDirectories} />
-         <MainRoot elements={elements} handleDelete={handleDelete} />
+
+         <MainRoot elements={elements} fetchDirElementes={fetchDirElementes} handleDelete={handleDelete} justFetch={justFetch} />
       </>
    );
 };

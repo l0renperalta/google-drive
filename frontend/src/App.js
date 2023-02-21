@@ -1,7 +1,6 @@
 import './App.css';
 import UploadForm from './components/UploadForm';
-import { BrowserRouter as Router, Switch, Routes, Route, Redirect } from 'react-router-dom';
-import DirName from './components/DirName';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
    return (
@@ -9,7 +8,7 @@ function App() {
          <div className="container">
             <UploadForm />
             <Routes>
-               <Route path="/:dirName" element={<DirName />} />
+               <Route path="/:dirName" />
             </Routes>
          </div>
       </Router>
