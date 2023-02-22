@@ -13,10 +13,18 @@ export const fetchDirData = async (dirPath) => {
 };
 
 export const uploadFiles = async (uploadedFile) => {
-   await axios.post('http://localhost:5000/', { receiveFiles: uploadedFile }, { headers: { 'Content-Type': 'multipart/form-data' } });
+   await axios.post(
+      'http://localhost:5000/',
+      { receiveFiles: uploadedFile },
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+   );
 };
 export const uploadFilesPath = async (path, uploadedFile) => {
-   await axios.post('http://localhost:5000/' + path, { receiveFiles: uploadedFile }, { headers: { 'Content-Type': 'multipart/form-data' } });
+   await axios.post(
+      'http://localhost:5000/' + path,
+      { receiveFiles: uploadedFile },
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+   );
 };
 
 export const createDirectory = async (dirName) => {
@@ -34,4 +42,7 @@ export const createDirectoryOnPath = async (path, dirName) => {
 
 export const handleDeleteFile = async (file) => {
    await axios.get('http://localhost:5000/delete/' + file);
+};
+export const handleDeleteFilePath = async (path, file) => {
+   await axios.get('http://localhost:5000/delete/' + path + file);
 };

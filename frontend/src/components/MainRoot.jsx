@@ -3,9 +3,15 @@ import { GoFileDirectory } from 'react-icons/go';
 import { Link } from 'react-router-dom';
 
 function MainRoot({ elements, handleDelete, fetchDirElementes, justFetch }) {
+   const getPath = () => {
+      let path = window.location.pathname;
+      let splitPath = path.split('-');
+      splitPath.pop();
+      return splitPath.join('-');
+   };
    return (
       <>
-         <Link to={'/'}>
+         <Link to={getPath()}>
             <div className="back" onClick={() => justFetch()}>
                <BsFillCapslockFill />
             </div>
@@ -14,7 +20,10 @@ function MainRoot({ elements, handleDelete, fetchDirElementes, justFetch }) {
             {elements.directories.map((directory, index) => (
                <div key={index}>
                   <GoFileDirectory style={{ color: '#3ea6ff', paddingRight: '1em' }} />
-                  <Link to={window.location.pathname.split('/')[1] + '-' + directory} onClick={() => fetchDirElementes(true, directory)}>
+                  <Link
+                     to={window.location.pathname.split('/')[1] + '-' + directory}
+                     onClick={() => fetchDirElementes(true, directory)}
+                  >
                      {directory}
                   </Link>
                </div>
