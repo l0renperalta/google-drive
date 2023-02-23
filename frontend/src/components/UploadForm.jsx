@@ -1,11 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-   fetchData,
-   uploadFiles,
-   uploadFilesPath,
-   handleDeleteFile,
-   fetchDirData,
-} from '../services/api';
+import { fetchData, uploadFiles, uploadFilesPath, handleDeleteFilePath, handleDeleteFile, fetchDirData } from '../services/api';
 import CreateDirectory from './CreateDirectory';
 import MainRoot from './MainRoot';
 
@@ -14,23 +8,24 @@ const UploadForm = () => {
    const [elements, setElements] = useState({ files: [], directories: [] });
    const [clickOnSubmit, setClickOnSubmit] = useState({ state: true, path: '' });
    const [clickOnDelete, setClickOnDelete] = useState(false);
+   const [deleteRoot, setDeleteRoot] = useState(false);
    const [onLoadPath, setOnLoadPath] = useState({ state: false, dir: '' });
 
    useEffect(() => {
       if (clickOnSubmit) {
-         if (clickOnSubmit.path > 1) {
-            fetchDirData(clickOnSubmit.path).then((data) => {
-               setElements(data.elements);
-               setClickOnSubmit(data.state);
-            });
-         } else {
-            fetchData().then((data) => {
-               setElements(data.elements);
-               setClickOnSubmit(data.state);
-            });
-         }
+         fetchDirData(clickOnSubmit.path).then((data) => {
+            setElements(data.elements);
+            setClickOnSubmit(data.state);
+         });
       }
       if (clickOnDelete) {
+         const path = window.location.pathname.split('/')[1];
+         fetchDirData(path).then((data) => {
+            setElements(data.elements);
+            setClickOnDelete(data.state);
+         });
+      }
+      if (deleteRoot) {
          fetchData().then((data) => {
             setElements(data.elements);
             setClickOnDelete(data.state);
@@ -59,22 +54,26 @@ const UploadForm = () => {
       const path = window.location.pathname.split('/')[1];
       if (path.length > 1) {
          await uploadFilesPath(path, uploadedFile);
-         setClickOnSubmit(true, path);
+         setClickOnSubmit({ state: true, path: path });
+         console.log('path true', path);
       } else {
          await uploadFiles(uploadedFile);
-         setClickOnSubmit(true);
+         setClickOnSubmit({ state: true, path: '' });
+         console.log('path false', path);
       }
 
       e.target[0].value = null;
    };
 
    const handleDelete = (data) => {
+      const path = window.location.pathname.split('/')[1];
+      handleDeleteFilePath(path, data.file);
       setClickOnDelete(data.state);
-      // if() {
-      //    handleDeleteFilePath(path, data.file);
-      // } else {
-      // }
+   };
+
+   const DeleteOnRoot = (data) => {
       handleDeleteFile(data.file);
+      setClickOnDelete(data.state);
    };
 
    const fetchDirectories = (data) => {
@@ -99,12 +98,7 @@ const UploadForm = () => {
          </div>
          <CreateDirectory fetchDirectories={fetchDirectories} />
 
-         <MainRoot
-            elements={elements}
-            fetchDirElementes={fetchDirElementes}
-            handleDelete={handleDelete}
-            justFetch={justFetch}
-         />
+         <MainRoot elements={elements} fetchDirElementes={fetchDirElementes} handleDelete={handleDelete} DeleteOnRoot={DeleteOnRoot} justFetch={justFetch} />
       </>
    );
 };
