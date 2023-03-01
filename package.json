@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server": "nodemon backend/index"
+    "server": "nodemon backend/index",
+    "client": "npm run start --prefix frontend",
+    "dev": "concurrently  \"npm run server\" \"npm run client\"  "
   },
   "repository": {
     "type": "git",
@@ -23,6 +25,7 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "concurrently": "^7.6.0",
     "nodemon": "^2.0.20"
   }
 }
