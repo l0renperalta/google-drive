@@ -18,9 +18,9 @@ router.post('/create/:path/:dirName', (req, res) => {
    const dir = finalPath + req.params.dirName;
    if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
-      res.json('directory created');
+      res.json({ message: 'directory created' });
    } else {
-      res.json('directory already exists');
+      res.json({ message: 'directory already exists' });
    }
 });
 

@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { uploadFilesPath, handleDeleteFilePath, handleDeleteFile, fetchDirData } from '../services/api';
 import CreateDirectory from './CreateDirectory';
 import ListDirectory from './ListDirectory';
+import swal from 'sweetalert';
 
 const UploadForm = () => {
-   const [uploadedFile, setUploadedFile] = useState();
+   const [uploadedFile, setUploadedFile] = useState(null);
    const [elements, setElements] = useState({ files: [], directories: [] });
    const [clickOnSubmit, setClickOnSubmit] = useState({ state: true, path: '' });
    const [clickOnDelete, setClickOnDelete] = useState(false);
@@ -46,16 +47,17 @@ const UploadForm = () => {
 
    const handleUploadClick = async (e) => {
       e.preventDefault();
-      if (!uploadedFile) {
-         console.log('No file uploaded');
-         return;
+      if (uploadedFile === null) {
+         swal('Oops!', 'No file was selected', 'error');
+      } else {
+         const path = window.location.pathname.split('/')[1];
+         await uploadFilesPath(path, uploadedFile);
+         setClickOnSubmit({ state: true, path: path });
+
+         swal('Uploaded successfully!', '', 'success');
+         setUploadedFile(null);
+         e.target[0].value = null;
       }
-
-      const path = window.location.pathname.split('/')[1];
-      await uploadFilesPath(path, uploadedFile);
-      setClickOnSubmit({ state: true, path: path });
-
-      e.target[0].value = null;
    };
 
    const fetchDirectories = (data) => {
